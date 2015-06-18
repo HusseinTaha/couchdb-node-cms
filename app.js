@@ -4,7 +4,12 @@ var express  = require('express')
   , mustacheExpress = require('mustache-express')
   , bodyParser = require('body-parser');
 
-var client     = couchdb.createClient(config.port, config.host, { user: config.user, password: config.password })
+var options = {};
+if (config.user && config.password) {
+    options.user = config.user;
+    options.password = config.password;
+}
+var client     = couchdb.createClient(config.port, config.host, options)
   , db         = client.db(config.db);
 
 var app = express();
