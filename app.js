@@ -2,7 +2,17 @@ var express  = require('express')
   , couchdb = require('couchdb')
   , config = require('./config')
   , mustacheExpress = require('mustache-express')
-  , bodyParser = require('body-parser');
+  , bodyParser = require('body-parser')
+  , marked = require( "marked" );
+
+  // Synchronous highlighting with highlight.js
+marked.setOptions({
+  gfm: true,
+   breaks: true,
+  highlight: function (code) {
+    return require('highlight.js').highlightAuto(code).value;
+  }
+});
 
 var options = {};
 if (config.user && config.password) {
@@ -56,6 +66,7 @@ app.post('/posts', function(req, res) {
   var post = req.body;
   post.type = 'post';
   post.postedAt = new Date();
+  post.body = marked(post.body);
 
   db.saveDoc(post).then(function(resp) {
     res.redirect('/posts');
