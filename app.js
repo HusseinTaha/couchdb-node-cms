@@ -35,10 +35,7 @@ app.get('/posts', function(req, res) {
             
           });
   }, function(err) {
-    if (err.error && err.error === 'not_found') {
-      return bogart.error('execute syncDesignDoc before trying to use the blog');
-    }
-    throw err;
+    console.log(err);
   });
 });
 
@@ -85,6 +82,6 @@ var server = app.listen(process.env.PORT || 8080, function () {
   var host = server.address().address;
   var port = server.address().port;
 
-  console.log('Example app listening at http://%s:%s', host, port);
+  console.log('Server is listening at http://%s:%s', host, port);
 
 });
