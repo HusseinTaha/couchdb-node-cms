@@ -1,0 +1,18 @@
+{
+    "name": "blog",
+    "description": "Blog nodejs with couchdb",
+    "version": "0.1.0",
+    "author": "Hussein Taha",
+    "email": "taha.hussein@outlook.com",
+    "main": "./app",
+    "directories": { "lib": "./lib" },
+    "dependencies": {
+      "express": "^4.12.4",
+      "body-parser": "^1.9.0",
+      "mustache-express": "^1.2.1",
+      "mustache": "0.3.1-dev",
+      "couchdb": ">=0.1.2",
+      "request": "^2.55.0",
+      "promised-io": "=0.2.3"
+    }
+}
