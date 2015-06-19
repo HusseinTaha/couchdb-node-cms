@@ -49,7 +49,7 @@ app.get('/', function(req, res) {
 app.get('/posts', function(req, res) {
 
   db.view( config.db, 'posts_by_date', function(err, resp) {
-    var posts = resp.rows.map(function(x) { return x.value; });
+    var posts = resp.rows.map(function(x) { x.value.body = marked(x.value.body); return x.value; });
     res.render('posts', {
             head: {
                   title: 'page title'
@@ -72,7 +72,7 @@ app.post('/posts', function(req, res) {
   var post = req.body;
   post.type = 'post';
   post.postedAt = new Date();
-  post.body = marked(post.body);
+  post.body = post.body;
 
   db.insert(post, function(err, resp) {
     res.redirect('/posts');
