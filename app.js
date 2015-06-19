@@ -73,15 +73,37 @@ app.post('/posts', function(req, res) {
   post.type = 'post';
   post.postedAt = new Date();
   post.body = post.body;
+  if(req.body._id){
+    db.get(req.body._id, function(err, resp) {
+      if(!err){
+        resp.title = post.title;
+        resp.body = post.body;
+        resp.postedAt = post.postedAt;
+        db.insert(resp, function(err, resp) {
+          res.redirect('/posts');
+        });
+      }
+    });
+  }else{
+    db.insert(post, function(err, resp) {
+      res.redirect('/posts');
+    });
+  }
 
-  db.insert(post, function(err, resp) {
-    res.redirect('/posts');
+  
+});
+
+app.get('/posts/:id/edit', function(req, res){
+  db.get(req.params.id, function(err, resp) {
+    
+    res.render('edit-post.html', {title: resp.title, body: resp.body, _rev: resp._rev, _id: resp._id} );
   });
 });
 
 app.get('/posts/:id', function(req, res) {
   db.get(req.params.id, function(err, resp) {
     var attachments = resp._attachments;
+    resp.body = marked(resp.body);
     var files = [];
     if(attachments){
       for(var key in attachments){
