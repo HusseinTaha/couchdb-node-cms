@@ -7,37 +7,34 @@
 </div>
 
 <div>
-  <h2>Comments</h2>
-  <ul id='comments'>
-    {{#comments}}
+  <h2>Files</h2>
+  <ul id='files'>
+    {{#files}}
       <li>
         <div>
-          Author: <span class='author'>{{author}}</span>
-        </div>
-        <div>
-          {{body}}
+          <a href="/posts/{{_id}}/files/{{.}}">{{.}}</a>
         </div>
       </li>
-    {{/comments}}
+    {{/files}}
 
-    {{^comments}}
-      No Comments Yet
-    {{/comments}}
+    {{^files}}
+      No Files Yet
+    {{/files}}
   </ul>
 </div>
 
-<form method='post' action='/posts/{{_id}}/comments'>
+<form method='post'  enctype="multipart/form-data" action='/posts/{{_id}}/files'>
   <fieldset>
-    <legend>Leave a Comment</legend>
+    <legend>Leave a file</legend>
+
 
     <div>
-      <label for='author'>Your Name</label>
-      <input name='author' />
+      <label for='file'>Your File</label>
+      <input name='file' type="file"/>
     </div>
-
     <div>
-      <label for='body'>Your Comment</label>
-      <input name='body' />
+      <label for='isPrivate'>Private</label>
+      <input name='isPrivate' type="checkbox"/>
     </div>
 
     <div class='buttons'>

@@ -1,14 +1,17 @@
 var express  = require('express')
-  , couchdb = require('couchdb')
+  , nano = require('nano')
   , config = require('./config')
   , mustacheExpress = require('mustache-express')
   , bodyParser = require('body-parser')
-  , marked = require( "marked" );
+  , marked = require( "marked" )
+  , request = require("request")
+  , Busboy = require('busboy');
 
-  // Synchronous highlighting with highlight.js
+var urlCouchDb = "";
+
 marked.setOptions({
   gfm: true,
-   breaks: true,
+  breaks: true,
   highlight: function (code) {
     return require('highlight.js').highlightAuto(code).value;
   }
@@ -18,9 +21,14 @@ var options = {};
 if (config.user && config.password) {
     options.user = config.user;
     options.password = config.password;
+    urlCouchDb = 'http://' + config.user + ":" + config.password + "@" +
+      config.host + ":" + config.port;// + "/" + config.db;
+}else{
+  urlCouchDb = 'http://' + config.host + ":" + config.port;// + "/" + config.db;
 }
-var client     = couchdb.createClient(config.port, config.host, options)
-  , db         = client.db(config.db);
+
+var client  = nano(urlCouchDb);
+var db = client.use(config.db);
 
 var app = express();
 
@@ -40,7 +48,7 @@ app.get('/', function(req, res) {
 
 app.get('/posts', function(req, res) {
 
-  db.view(config.db, 'posts_by_date').then(function(resp) {
+  db.view( config.db, 'posts_by_date', function(err, resp) {
     var posts = resp.rows.map(function(x) { return x.value; });
     res.render('posts', {
             head: {
@@ -49,8 +57,6 @@ app.get('/posts', function(req, res) {
             posts: posts
             
           });
-  }, function(err) {
-    console.log(err);
   });
 });
 
@@ -68,28 +74,77 @@ app.post('/posts', function(req, res) {
   post.postedAt = new Date();
   post.body = marked(post.body);
 
-  db.saveDoc(post).then(function(resp) {
+  db.insert(post, function(err, resp) {
     res.redirect('/posts');
   });
 });
 
 app.get('/posts/:id', function(req, res) {
-  db.openDoc(req.params.id).then(function(post) {
-    res.render('post.html', post );
+  db.get(req.params.id, function(err, resp) {
+    var attachments = resp._attachments;
+    var files = [];
+    if(attachments){
+      for(var key in attachments){
+        files.push(key);
+      }
+      resp.files = files;
+      delete resp._attachments;
+    }
+    res.render('post.html', resp );
   });
 });
 
-app.post('/posts/:id/comments', function(req, res) {
-  var comment = req.body;
+app.get('/posts/:id/files/:filename', function(req, res) {
+  db.attachment.get(req.params.id, req.params.filename).pipe(res);
+});
 
-  db.openDoc(req.params.id).then(function(post) {
-    post.comments = post.comments || [];
-    post.comments.push(comment);
+app.post('/posts/:id/files', function(req, res) {
 
-    db.saveDoc(post).then(function(resp) {
-      res.redirect('/posts/'+req.params.id);
+  var busboy = new Busboy({ headers: req.headers });
+  var fileData, fileName, mimeType, isPrivate = false;
+  busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    // console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+    fileName = filename;
+    mimeType = mimetype;
+    file.on('data', function(data) {
+      fileData = data
+      // console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
+    });
+    file.on('end', function() {
+      console.log('File [' + fieldname + '] Finished');
     });
   });
+  busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
+      console.log('Field [' + fieldname + ']: value: ' + val);
+      if(val === 'on')
+        isPrivate = true;
+      else
+        isPrivate = false;
+  });
+
+  busboy.on('finish', function() {
+    console.log('Done parsing form!');
+    db.get(req.params.id, function(err, resp) {
+      db.attachment.insert(req.params.id, fileName, fileData, mimeType, { rev: resp._rev }, 
+      function(err, attachResp){
+        if(!err){
+           db.get(req.params.id, function(err, resp2) {
+            resp2.credentiels = resp2.credentiels || {};
+            resp2.credentiels[fileName] = {isPrivate: isPrivate};
+             db.insert(resp2, function(err, r) {
+              res.writeHead(303, {Connection: 'close', Location: '/posts/' + req.params.id})
+              res.end();
+            });
+          });
+        }else{
+          res.writeHead(500, {Connection: 'close', Location: '/posts'})
+          res.end();
+        }
+      });
+    });
+  });
+  req.pipe(busboy);
+
 });
 
 
