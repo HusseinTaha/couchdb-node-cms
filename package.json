@@ -1,10 +1,30 @@
 {
-    "name": "blog",
-    "description": "Blog nodejs with couchdb",
+    "name": "couchdb-node-cms",
     "version": "0.1.0",
     "author": "Hussein Taha",
     "email": "taha.hussein@outlook.com",
-    "main": "./app",
+    "description": "A small library providing micro cms using couchdb and nodejs",
+    "main": "./lib/main",
+
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/HusseinTaha/couchdb-node-cms.git"
+    },
+    "keywords": [
+      "couchdb",
+      "node",
+      "cms",
+      "engine",
+      "file",
+      "micro"
+    ],
+    "licenses": [
+      {
+        "type": "Apache",
+        "url": "https://github.com/HusseinTaha/couchdb-node-cms/raw/master/LICENSE"
+      }
+    ],
+    
     "directories": { "lib": "./lib" },
     "dependencies": {
       "express": "^4.12.4",

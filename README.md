@@ -1,8 +1,51 @@
-# couchdb-node-cms
-A CMS for couchdb and nodejs
+
+couchdb-node-cms
+================
+
+A micro CMS for couchdb and nodejs
 This project use nodejs and couchdb to  manage data from database using html templates.
 
-# run
-  you  should have couchdb installed<br/>
-  and just open your terminal and type<br/>
-  ``` make ```
+## Installation
+
+  npm install couchdb-node-cms --save
+
+## Usage
+
+    var express  = require('express')
+  	, CmsEngine = require('couchdb-node-cms')
+  	, config = require('./config');
+  
+    var app = express();
+    
+    var server = app.listen(process.env.PORT || 8080, function () {
+    
+      var host = server.address().address;
+      var port = server.address().port;
+    
+      console.log('Server is listening at http://%s:%s', host, port);
+    
+    });
+    
+    // options :{
+    //    config: { host: "…", port: "…", user: "", password: "" },
+    //    server: expressServer,
+    //    auth: authentication method,
+    //    apiRoot: “/admin/v1/cms”
+    // }
+    var cmsEngine = new CmsEngine({
+       config: config,
+       server: app,
+       auth: function(){},
+       apiRoot: '/admin'
+     });
+    
+    cmsEngine.start();
+
+
+## Contributing
+
+If you want to contribute, please don't hesitate and send a pull request.
+
+## Release History
+
+* 0.1.0 Initial release
