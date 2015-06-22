@@ -16,16 +16,7 @@ This project use nodejs and couchdb to  manage data from database using html tem
   	, config = require('./config');
   
     var app = express();
-    
-    var server = app.listen(process.env.PORT || 8080, function () {
-    
-      var host = server.address().address;
-      var port = server.address().port;
-    
-      console.log('Server is listening at http://%s:%s', host, port);
-    
-    });
-    
+
     // options :{
     //    config: { host: "…", port: "…", user: "", password: "" },
     //    server: expressServer,
@@ -40,6 +31,16 @@ This project use nodejs and couchdb to  manage data from database using html tem
      });
     
     cmsEngine.start();
+    
+    var server = app.listen(process.env.PORT || 8080, function () {
+    
+      var host = server.address().address;
+      var port = server.address().port;
+    
+      console.log('Server is listening at http://%s:%s', host, port);
+    
+    });
+    
 
 
 ## Contributing
@@ -48,4 +49,4 @@ If you want to contribute, please don't hesitate and send a pull request.
 
 ## Release History
 
-* 0.1.0 Initial release
+* 0.1.1 Initial release
