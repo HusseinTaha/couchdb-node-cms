@@ -1,4 +1,4 @@
-<a href='/posts'>Home</a>
+<a href='{{apiRoot}}/posts'>Home</a>
 
 <h1>{{title}}</h1>
 
@@ -12,9 +12,9 @@
     {{#files}}
       <li>
         <div>
-          <a href="/posts/{{_id}}/files/{{name}}">{{name}}</a>
-          <a href="/posts/{{_id}}/files/{{name}}/delete">Delete</a>
-          <a href="/posts/{{_id}}/files/{{name}}/credentials/{{credentials}}">{{option}}</a>
+          <a href="{{apiRoot}}/posts/{{_id}}/files/{{name}}">{{name}}</a>
+          <a href="{{apiRoot}}/posts/{{_id}}/files/{{name}}/delete">Delete</a>
+          <a href="{{apiRoot}}/posts/{{_id}}/files/{{name}}/credentials/{{credentials}}">{{option}}</a>
         </div>
       </li>
     {{/files}}
@@ -25,7 +25,7 @@
   </ul>
 </div>
 
-<form method='post'  enctype="multipart/form-data" action='/posts/{{_id}}/files'>
+<form method='post'  enctype="multipart/form-data" action='{{apiRoot}}/posts/{{_id}}/files'>
   <fieldset>
     <legend>Leave a file</legend>
 
@@ -40,7 +40,7 @@
     </div>
 
     <div class='buttons'>
-      <input type='submit' value='Post Comment' />
+      <input type='submit' value='Upload file' />
     </div>
   </fieldset>
 </form>
