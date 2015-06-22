@@ -12,7 +12,9 @@
     {{#files}}
       <li>
         <div>
-          <a href="/posts/{{_id}}/files/{{.}}">{{.}}</a>
+          <a href="/posts/{{_id}}/files/{{name}}">{{name}}</a>
+          <a href="/posts/{{_id}}/files/{{name}}/delete">Delete</a>
+          <a href="/posts/{{_id}}/files/{{name}}/credentials/{{credentials}}">{{option}}</a>
         </div>
       </li>
     {{/files}}

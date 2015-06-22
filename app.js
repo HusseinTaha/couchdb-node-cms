@@ -107,7 +107,9 @@ app.get('/posts/:id', function(req, res) {
     var files = [];
     if(attachments){
       for(var key in attachments){
-        files.push(key);
+        files.push({name: key, 
+          option: (resp.credentials[key].isPrivate ? 'Make public' : 'Make private'),
+          credentials:  resp.credentials[key].isPrivate});
       }
       resp.files = files;
       delete resp._attachments;
@@ -117,7 +119,60 @@ app.get('/posts/:id', function(req, res) {
 });
 
 app.get('/posts/:id/files/:filename', function(req, res) {
-  db.attachment.get(req.params.id, req.params.filename).pipe(res);
+  db.get(req.params.id, function(err, resp) {
+    if(!err){
+      if(!resp.credentials[req.params.filename].isPrivate)
+        db.attachment.get(req.params.id, req.params.filename).pipe(res);
+      else
+        console.log("unauthorized!");
+    }else{
+      res.writeHead(500, {Connection: 'close', Location: '/posts'})
+      res.end();
+    }
+  });
+});
+
+app.get('/posts/:id/files/:filename/credentials/:credentials', function(req, res) {
+  db.get(req.params.id, function(err, resp) {
+    if(!err){
+      console.log(resp.credentials[req.params.filename].isPrivate);
+      resp.credentials[req.params.filename].isPrivate = req.params.credentials === 'true'? false: true;
+      console.log(resp.credentials[req.params.filename].isPrivate);
+      db.insert(resp, function(err, r) {
+        res.writeHead(303, {Connection: 'close', Location: '/posts/' + req.params.id})
+        res.end();
+      });
+    }else{
+      res.writeHead(500, {Connection: 'close', Location: '/posts'})
+      res.end();
+    }
+  });
+});
+
+
+app.get('/posts/:id/files/:filename/delete', function(req, res) {
+  db.get(req.params.id, function(err, resp) {
+    if(!err){
+      db.attachment.destroy(req.params.id, req.params.filename,
+        {rev: resp._rev}, function(err, body) {
+          if (!err){
+            db.get(req.params.id, function(err, resp2) {
+              delete resp2.credentials[req.params.filename];
+              db.insert(resp2, function(err, r) {
+                res.writeHead(303, {Connection: 'close', Location: '/posts/' + req.params.id})
+                res.end();
+              });
+            });
+          }else{
+            res.writeHead(500, {Connection: 'close', Location: '/posts'})
+            res.end();
+          }
+      });
+    }else{
+      res.writeHead(500, {Connection: 'close', Location: '/posts'})
+      res.end();
+    }
+  });
 });
 
 app.post('/posts/:id/files', function(req, res) {
@@ -151,8 +206,8 @@ app.post('/posts/:id/files', function(req, res) {
       function(err, attachResp){
         if(!err){
            db.get(req.params.id, function(err, resp2) {
-            resp2.credentiels = resp2.credentiels || {};
-            resp2.credentiels[fileName] = {isPrivate: isPrivate};
+            resp2.credentials = resp2.credentials || {};
+            resp2.credentials[fileName] = {isPrivate: isPrivate};
              db.insert(resp2, function(err, r) {
               res.writeHead(303, {Connection: 'close', Location: '/posts/' + req.params.id})
               res.end();
