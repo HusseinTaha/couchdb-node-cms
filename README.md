@@ -49,4 +49,4 @@ If you want to contribute, please don't hesitate and send a pull request.
 
 ## Release History
 
-* 0.1.1 Initial release
+* 0.1.2 Initial release
