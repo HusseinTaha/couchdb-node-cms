@@ -1,20 +1,21 @@
-<form method='post' action='{{apiRoot}}/posts'>
+<a href='{{apiRoot}}/posts'>Home</a>
+<form method='post' id='form-post' action='{{apiRoot}}/posts'>
   <fieldset>
     <legend>Edit Post</legend>
 
     <div>
       <label for='title'>Title</label>
-      <input name='title' value='{{title}}'/>
+      <input name='title' type='text' class="form-control" value='{{title}}'/>
     </div>
     <input type="hidden" name="_rev" value="{{_rev}}"/>
     <input type="hidden" name="_id" value="{{_id}}"/>
     <div>
       <label for='body'>Body</label>
-      <textarea name='body' rows='15' columns='25'>{{{body}}}</textarea>
+      <textarea name='body' class="form-control" rows='15' columns='25'>{{{body}}}</textarea>
     </div>
 
     <div class='buttons'>
-      <input type='submit' value='Save Post' />
+      <input type='submit' class='form-control btn btn-default' value='Save Post' />
     </div>
   </fieldset>
 </form>

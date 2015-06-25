@@ -1,15 +1,21 @@
-<h2>Posts</h2>
+<h2>Pages</h2>
 
 <a href='{{apiRoot}}/posts/new'>New Post</a>
 
-<ul>
+<ul class="list-group">
   {{#posts}}
-    <li>
-      <div class='post'>
-        <h2><a href='{{apiRoot}}/posts/{{_id}}'>{{title}}</a></h2> <h4><a href='{{apiRoot}}/posts/{{_id}}/edit'>Edit</a></h4>
-        <p>
+    <li class="list-group-item">
+      <div class = 'row'>
+        <h2 class="col-xs-6 col-md-4">
+          <a href='{{apiRoot}}/posts/{{_id}}' class='page-anchor'>{{title}}</a>
+        </h2> 
+        <div class="col-xs-6 col-md-8 text-right">
+          <h4><a class='glyphicon glyphicon-pencil btn-primary btn-xs edit-button' href='{{apiRoot}}/posts/{{_id}}/edit'>Edit</a></h4>
+          <h4><a class='glyphicon glyphicon-trash btn-danger btn-xs delete-button' href='{{apiRoot}}/posts/{{_id}}/delete'>Delete</a></h4>
+        </div>
+        <!-- <p>
           {{{body}}}
-        </p>
+        </p> -->
       </div>
     </li>
   {{/posts}}

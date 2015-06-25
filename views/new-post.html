@@ -1,19 +1,20 @@
-<form method='post' action='{{apiRoot}}/posts'>
+<a href='{{apiRoot}}/posts'>Home</a>
+<form method='post' id='form-post' action='{{apiRoot}}/posts'>
   <fieldset>
-    <legend>New Post</legend>
+    <legend>New Page</legend>
 
     <div>
       <label for='title'>Title</label>
-      <input name='title' />
+      <input name='title' type='text' class="form-control"/>
     </div>
 
     <div>
       <label for='body'>Body</label>
-      <textarea name='body' rows='15' columns='25'></textarea>
+      <textarea name='body' class="form-control" rows='15' columns='25'></textarea>
     </div>
 
     <div class='buttons'>
-      <input type='submit' value='Save Post' />
+      <input type='submit' class="form-control btn btn-default" value='Save Post' />
     </div>
   </fieldset>
 </form>
