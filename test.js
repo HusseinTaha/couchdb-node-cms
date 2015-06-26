@@ -1,5 +1,6 @@
 var express  = require('express')
-	, CmsEngine = require('couchdb-node-cms')
+	// , CmsEngine = require('couchdb-node-cms')
+	, CmsEngine = require('./lib/main')
 	, config = require('./config');
 
 var app = express();
