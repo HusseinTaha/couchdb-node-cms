@@ -1,6 +1,6 @@
 {
     "name": "couchdb-node-cms",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "author": "Hussein Taha",
     "email": "taha.hussein@outlook.com",
     "description": "A small library providing micro cms using couchdb and nodejs",
